@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GenAI Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="chat-container">
+    <h2>🤖 GenAI Assistant</h2>
+
+    <select id="model">
+        <option value="granite">Granite</option>
+        <option value="llama">Llama</option>
+        <option value="mistral">Mistral</option>
+    </select>
+
+    <div id="chat-box" class="chat-box"></div>
+
+    <textarea id="message" placeholder="Type your message..."></textarea>
+
+    <div class="buttons">
+        <button onclick="sendMessage()">Send</button>
+        <button class="clear-btn" onclick="clearChat()">Clear Chat</button>
+    </div>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
