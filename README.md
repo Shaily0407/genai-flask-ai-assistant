@@ -9,7 +9,6 @@ A production-style AI assistant built using Flask and IBM watsonx.
 - Sentiment detection
 - Response time tracking
 - Structured logging
-- Dark mode modern UI
 - RESTful backend architecture
 
 ## 🛠 Tech Stack
