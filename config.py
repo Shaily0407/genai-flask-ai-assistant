@@ -1,5 +1,7 @@
 
-OPENROUTER_API_KEY = "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"
+import os
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 """
 MODEL_DEFAULT = "granite"
 
