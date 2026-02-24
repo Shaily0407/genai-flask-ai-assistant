@@ -2,26 +2,32 @@
 <html>
 <head>
     <title>GenAI Assistant</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="chat-container">
-    <h2>🤖 GenAI Assistant</h2>
-
-    <select id="model">
-        <option value="granite">Granite</option>
-        <option value="llama">Llama</option>
-        <option value="mistral">Mistral</option>
-    </select>
+    <div class="header">
+        <h2>🤖 GenAI Assistant</h2>
+        <select id="model">
+            <option value="granite">Granite</option>
+            <option value="llama">Llama</option>
+            <option value="mistral">Mistral</option>
+        </select>
+    </div>
 
     <div id="chat-box" class="chat-box"></div>
 
-    <textarea id="message" placeholder="Type your message..."></textarea>
-
-    <div class="buttons">
-        <button onclick="sendMessage()">Send</button>
-        <button class="clear-btn" onclick="clearChat()">Clear Chat</button>
+    <div class="input-area">
+        <textarea id="message" placeholder="Type your message..."></textarea>
+        <div class="buttons">
+            <button onclick="sendMessage()">Send</button>
+            <button class="clear-btn" onclick="clearChat()">Clear</button>
+        </div>
     </div>
 </div>
 

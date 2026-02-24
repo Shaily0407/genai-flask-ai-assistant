@@ -1,11 +1,6 @@
-import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
-
 import time
 import logging
-from ibm_watsonx_ai import Credentials
-from ibm_watsonx_ai.foundation_models import ModelInference
-from ibm_watsonx_ai.metanames import GenTextParamsMetaNames
+import requests
 from config import *
 
 logging.basicConfig(
@@ -14,7 +9,6 @@ logging.basicConfig(
 )
 
 
-# 🔹 Simple sentiment detection
 def detect_sentiment(text):
     text = text.lower()
 
@@ -32,7 +26,6 @@ def detect_sentiment(text):
     return "Neutral"
 
 
-# 🔹 MAIN FUNCTION (WITH CHAT HISTORY)
 def generate_response(user_prompt, model_name, chat_history):
 
     start_time = time.time()
@@ -40,57 +33,52 @@ def generate_response(user_prompt, model_name, chat_history):
     logging.info(f"User message: {user_prompt}")
     logging.info(f"Selected model: {model_name}")
 
-    credentials = Credentials(
-        url=URL,
-        verify=False
-    )
-
-    model_id = MODELS.get(model_name, MODELS[MODEL_DEFAULT])
-
-    params = {
-        GenTextParamsMetaNames.DECODING_METHOD: DECODING_METHOD,
-        GenTextParamsMetaNames.MAX_NEW_TOKENS: MAX_NEW_TOKENS,
-        GenTextParamsMetaNames.TEMPERATURE: TEMPERATURE
-    }
-
-    model = ModelInference(
-        model_id=model_id,
-        params=params,
-        credentials=credentials,
-        project_id=PROJECT_ID
-    )
-
-    chat_history.append({
-        "role": "user",
-        "content": user_prompt
-    })
-
+    chat_history.append({"role": "user", "content": user_prompt})
     chat_history = chat_history[-10:]
 
-    context = ""
-    for msg in chat_history:
-        context += f"{msg['role'].capitalize()}: {msg['content']}\n"
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
-    formatted_prompt = f"""
-You are a helpful AI assistant.
+    # Map your dropdown to real OpenRouter models
+    model_map = {
+        "granite": "mistralai/mistral-7b-instruct",
+        "llama": "meta-llama/llama-3-8b-instruct",
+        "mistral": "mistralai/mistral-7b-instruct"
+    }
 
-Use the conversation history below to maintain context.
-Try to remember important details shared earlier.
-Respond naturally.
+    payload = {
+        "model": model_map.get(model_name, "mistralai/mistral-7b-instruct"),
+        "messages": chat_history,
+        "temperature": 0.3,
+        "max_tokens": 200
+    }
 
-Conversation History:
-{context}
+    response = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers=headers,
+        json=payload
+    )
 
-Assistant:
-"""
+    result = response.json()
 
-    response = model.generate(formatted_prompt)
-    raw_output = response['results'][0]['generated_text'].strip()
+    if "error" in result:
+        return {
+            "data": {
+                "summary": "Error",
+                "sentiment": "Unknown",
+                "response": result["error"]["message"],
+                "model_used": model_name,
+                "response_time": 0,
+                "total_messages": len(chat_history)
+            },
+            "updated_history": chat_history
+        }
 
-    chat_history.append({
-        "role": "assistant",
-        "content": raw_output
-    })
+    raw_output = result["choices"][0]["message"]["content"]
+
+    chat_history.append({"role": "assistant", "content": raw_output})
 
     end_time = time.time()
     response_time = round(end_time - start_time, 2)

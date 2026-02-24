@@ -1,6 +1,4 @@
 
-
-
 function sendMessage() {
     const message = document.getElementById("message").value;
     const model = document.getElementById("model").value;
