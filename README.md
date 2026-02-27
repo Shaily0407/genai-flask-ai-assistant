@@ -15,7 +15,7 @@ A production-style AI assistant built using Flask and IBM watsonx.
 
 - Python
 - Flask
-- IBM watsonx AI
+- OPEN AI
 - HTML/CSS/JavaScript
 - Logging & Performance Tracking
 
